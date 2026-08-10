@@ -16,7 +16,7 @@ Trong `Settings`, `agent_api_key` không có giá trị mặc định nên app c
 khi khởi động nếu thiếu biến môi trường. Hãy mô tả một tình huống cụ thể mà
 việc "chết sớm" này cứu bạn, so với việc để mặc định `"changeme"`.
 
-> *Câu trả lời của bạn*
+> Ví dụ khi deploy lên Railway, tôi quên khai báo biến `AGENT_API_KEY`. Nếu để mặc định `"changeme"`, service vẫn khởi động và bất kỳ ai đoán được khóa mặc định đều có thể gọi `/ask`, gây tốn chi phí. Khi không có giá trị mặc định, Settings báo lỗi ngay lúc khởi động, deploy thất bại để tôi bổ sung secret trước khi service nhận request.
 
 ---
 
@@ -26,7 +26,7 @@ Chạy service và gọi `/ask` vài lần. Dán một dòng log JSON bạn thu 
 nêu **hai** việc bạn làm được với dòng log đó mà `print("đã trả lời xong")`
 không làm được.
 
-> *Câu trả lời của bạn*
+> Ví dụ log JSON: `{"event":"ask_completed","level":"info","timestamp":"2026-08-10T03:15:00+00:00","user_id":"sv01","tokens_in":12,"tokens_out":24,"cost_usd":0.0001}`. Từ log này tôi có thể lọc và cộng `cost_usd` theo `user_id` để tìm người dùng tiêu nhiều nhất hoặc cảnh báo các event theo `level` trong một khoảng thời gian. Ngược lại, `print("đã trả lời xong")` không có trường dữ liệu để máy lọc, tổng hợp hay tạo cảnh báo đáng tin cậy.
 
 ---
 
