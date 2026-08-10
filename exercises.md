@@ -42,12 +42,12 @@ docker images | grep agent
 
 | Bản | Dung lượng |
 |-----|-----------|
-| 1 stage (bản đầu) | ... MB |
-| Multi-stage | ... MB |
+| 1 stage (bản đầu) | 1190 MB |
+| Multi-stage | 205 MB |
 
 Giải thích: phần dung lượng chênh lệch đó là những gì?
 
-> *Câu trả lời của bạn*
+> Bản multi-stage nhỏ hơn vì image runtime không mang theo toàn bộ môi trường build. Stage builder dùng để cài dependency, sau đó runtime chỉ copy virtual environment /opt/venv và source code cần thiết. Trong bản 1-stage, tất cả những gì xuất hiện trong image build đều nằm trong image cuối, bao gồm base image lớn hơn và các file/cache/phụ thuộc phục vụ quá trình cài đặt. Với multi-stage, stage builder bị loại khỏi image runtime nên các thành phần chỉ cần lúc build không được đưa vào production image. Ngoài ra, bản multi-stage sử dụng python:3.11-slim thay vì python:3.11, nên ngay từ base image đã nhỏ hơn đáng kể.
 
 ---
 
@@ -57,7 +57,7 @@ Sửa một ký tự trong `app/main.py` rồi build lại. Với Dockerfile c�
 layer nào được dùng lại từ cache, layer nào phải chạy lại? Nếu bạn đặt
 `COPY . .` lên trước `RUN pip install` thì kết quả khác thế nào?
 
-> *Câu trả lời của bạn*
+> Khi tôi chỉ sửa app/main.py, các layer liên quan đến requirements.txt vẫn được lấy từ cache. Layer COPY . . phải được tạo lại vì source code đã thay đổi. Các layer phía sau nó cũng không còn sử dụng cache theo chuỗi layer cũ. Nếu COPY . . được đặt trước RUN pip install, chỉ cần sửa một file Python cũng làm layer COPY thay đổi. Vì cache của Docker phụ thuộc vào các layer trước đó, layer pip install phía sau cũng phải chạy lại.
 
 ---
 
@@ -67,7 +67,7 @@ Container mặc định chạy bằng root. Mô tả chuỗi sự kiện dẫn t
 trong code Python của bạn" tới "kẻ tấn công có quyền cao trên máy host", và
 lệnh `USER` cắt đứt chuỗi đó ở chỗ nào.
 
-> *Câu trả lời của bạn*
+> Nếu ứng dụng Python có lỗ hổng cho phép Remote Code Execution, kẻ tấn công có thể thực thi command với cùng quyền của process chạy ứng dụng. Nếu container chạy mặc định bằng root thì process có UID 0, vì vậy attacker sau khi chiếm được ứng dụng cũng có quyền root bên trong container. Root trong container không đồng nghĩa ngay lập tức với root trên host vì Docker vẫn có namespace và các cơ chế isolation. Tuy nhiên, quyền root làm hậu quả nghiêm trọng hơn và tạo điều kiện cho các bước tiếp theo như khai thác kernel/container runtime vulnerability, truy cập volume nhạy cảm, Docker socket nếu bị mount sai, hoặc các cấu hình container không an toàn để thoát ra host. Lệnh USER appuser cắt chuỗi tấn công ngay sau bước chiếm quyền thực thi ứng dụng. Khi đó code của attacker chỉ chạy với quyền của user thường thay vì UID 0. Attacker vẫn có thể chiếm ứng dụng, nhưng phạm vi quyền hạn bị giảm đáng kể, làm container escape và thay đổi tài nguyên hệ thống khó hơn.
 
 ---
 
