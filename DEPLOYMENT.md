@@ -82,6 +82,8 @@ POST /ask (không có API key) → HTTP/1.1 401 Unauthorized
 POST /ask (có API key) → HTTP/1.1 200 OK
 {"answer":"...","user_id":"sv-deploy-check","history_length":0,
  "cost_usd":0.00002205,"tokens":{"in":3,"out":36}}
+
+Rate limit: 429 429 429 429 429 429 429 429 429 429 429 429 429 429 429
 ```
 
 ## Ảnh Chụp Màn Hình
@@ -91,4 +93,4 @@ Bạn tự tải các ảnh sau vào thư mục `screenshots/`:
 - `dashboard.png` — Render Dashboard, thấy web service `day12-agent` ở trạng thái **Live** và Redis `day12-redis`.
 - `health.png` — trình duyệt hoặc terminal hiển thị `GET /health` trả `200`.
 - `ready.png` — trình duyệt hoặc terminal hiển thị `GET /ready` trả `200` cùng `"redis": true`.
-- `ask-401.png` — terminal hiển thị `POST /ask` không gửi API key trả `401`.
+- `ask.png` — terminal hiển thị `POST /ask` không gửi API key trả `401`.

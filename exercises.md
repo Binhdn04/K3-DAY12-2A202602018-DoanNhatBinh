@@ -3,7 +3,7 @@
 > **Bài làm cá nhân.** Trả lời bằng lời của chính bạn, dựa trên những gì bạn
 > quan sát được khi chạy code — không sao chép đáp án của người khác.
 >
-> Cách trả lời: thay dòng `> *Câu trả lời của bạn*` bằng câu trả lời.
+> Cách trả lời: thay dòng `> **` bằng câu trả lời.
 > `grade.py` đếm số câu đã trả lời (15 điểm cho 10 câu).
 >
 > Họ và tên: ..........................  Mã học viên: ..........................
@@ -116,4 +116,4 @@ Ghi lại **một** lỗi bạn gặp khi deploy lên cloud (build fail, health 
 timeout, sai REDIS_URL, app không đọc `$PORT`...): thông báo lỗi là gì, bạn
 tìm ra nguyên nhân bằng cách nào, và sửa ra sao?
 
-> *Câu trả lời của bạn*
+> Khi vừa deploy lên Render, tôi mở URL gốc `https://day12-agent-kse6.onrender.com` và thấy thông báo `Not Found`. Tôi kiểm tra lại các route trong `app/main.py` và dùng curl gọi từng endpoint: `/health` trả 200 với `status: ok`, `/ready` trả 200 với `redis: true`, còn `/ask` không có API key trả 401. Như vậy service không bị lỗi deploy; nguyên nhân là ứng dụng API này không khai báo route `GET /`, nên URL gốc trả 404. Tôi xử lý bằng cách dùng đúng các endpoint của lab (`/health`, `/ready`, `/docs`, `/ask`) để kiểm tra và ghi Public URL cùng kết quả đó vào `DEPLOYMENT.md`.
